@@ -15,7 +15,7 @@ const apiClient: AxiosInstance = axios.create({
 });
 
 const openAiClient = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: "key",
   dangerouslyAllowBrowser: true,
 });
 
