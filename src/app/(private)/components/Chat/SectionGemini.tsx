@@ -1,7 +1,7 @@
 "use client";
 import { ScrollArea } from "@/components/scroll-area";
 import { cn } from "@/lib/utils";
-import { Mic, Send, X } from "lucide-react";
+import { Mic, Send, Square, X } from "lucide-react";
 import Image from "next/image";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -102,8 +102,8 @@ export function Section() {
   }, [isRecording]);
   return (
     <div className="h-[calc(100vh-80px)] w-full p-2 xl:h-[calc(100vh-112px)] xl:p-8">
-      <div className="flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-[url('/image.png')] bg-cover bg-center bg-no-repeat p-2 xl:flex-row xl:gap-32 xl:p-32">
-        <div className="h-2/5 w-full rounded-lg bg-white xl:h-full xl:w-[800px]">
+      <div className="flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-[url('/image.png')] bg-cover bg-center bg-no-repeat p-2 lg:p-4 xl:flex-row xl:gap-8 xl:p-8 2xl:gap-20 2xl:p-20">
+        <div className="h-2/5 w-full rounded-lg bg-white xl:h-full xl:w-[600px]">
           <iframe
             width="100%"
             height="100%"
@@ -122,7 +122,7 @@ export function Section() {
                 "absolute left-1/2 z-10 flex -translate-x-1/2 flex-col items-center justify-center gap-4 transition duration-1000",
                 isClicked
                   ? "-translate-y-5 xl:-translate-y-2/5"
-                  : "translate-y-full",
+                  : "translate-y-1/2",
               )}
             >
               <Image
@@ -130,7 +130,7 @@ export function Section() {
                 alt=""
                 width={1000}
                 height={1000}
-                className="shadow-primary h-10 w-10 rounded-full shadow-lg xl:h-32 xl:w-32"
+                className="shadow-primary h-10 w-10 rounded-full shadow-lg lg:h-20 lg:w-20 2xl:h-32 2xl:w-32"
               />
               <div
                 className={cn(
@@ -181,11 +181,13 @@ export function Section() {
                               <div className="bg-re-500 h-5 w-5" />
                             </>
                           ) : message.type?.includes("audio") ? (
-                            <AudioPlayer
-                              className="ai z-[9999] flex-1"
-                              size="default"
-                              audioUrl={message.file as string}
-                            />
+                            <div className="flex p-2">
+                              <AudioPlayer
+                                className="ai z-[9999] flex-1"
+                                size="default"
+                                audioUrl={message.file as string}
+                              />
+                            </div>
                           ) : message.type?.includes("video") ? (
                             <video
                               src={message.file as string}
@@ -232,7 +234,7 @@ export function Section() {
                         />
                         <div className="flex flex-col text-white">
                           <span className="mr-auto w-max text-[10px] xl:text-base">
-                            {message.role}
+                            Executivos Digital
                           </span>
                           {message.content === "..." ? (
                             <div className="mt-2 flex items-center justify-center space-x-2">
@@ -255,73 +257,76 @@ export function Section() {
             </div>
           </div>
           <div className="flex w-full flex-row items-center gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button className="relative flex h-11 w-11 items-center justify-center rounded-lg border border-zinc-500 px-4 py-2">
-                    <div className="absolute flex h-full w-full items-center justify-center p-1 text-zinc-400">
-                      <Image
-                        src={"./pdf3.svg"}
-                        alt=""
-                        width={100}
-                        height={100}
-                        className="h-full w-full"
+            <div className="flex flex-col items-center gap-1 md:flex-row">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="relative flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-500 px-4 py-2 md:h-11 md:w-11">
+                      <div className="absolute flex h-full w-full items-center justify-center p-1 text-zinc-400">
+                        <Image
+                          src={"./pdf3.svg"}
+                          alt=""
+                          width={100}
+                          height={100}
+                          className="h-full w-full"
+                        />
+                      </div>
+                      <input
+                        className="z-[2] h-8 w-8 rounded-full opacity-0"
+                        type="file"
+                        accept="application/pdf*"
+                        onChange={(e) => handleFileUpload(e)}
+                        disabled={loading || !!fileData}
                       />
-                    </div>
-                    <input
-                      className="z-[2] h-8 w-8 rounded-full opacity-0"
-                      type="file"
-                      accept="application/pdf*"
-                      onChange={(e) => handleFileUpload(e)}
-                      disabled={loading || !!fileData}
-                    />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="top"
-                  align="start"
-                  className="border-primary border bg-black"
-                >
-                  <p className="text-white">PDF</p>
-                  <TooltipArrow className="fill-primary" />
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button className="relative flex h-11 w-11 items-center justify-center rounded-lg border border-zinc-500 px-4 py-2">
-                    <div className="absolute flex h-full w-full items-center justify-center p-1">
-                      <Image
-                        src={"./photo3.svg"}
-                        alt=""
-                        width={100}
-                        height={100}
-                        className="h-full w-full"
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    align="start"
+                    className="border-primary border bg-black"
+                  >
+                    <p className="text-white">PDF</p>
+                    <TooltipArrow className="fill-primary" />
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="relative flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-500 px-4 py-2 md:h-11 md:w-11">
+                      <div className="absolute flex h-full w-full items-center justify-center p-1">
+                        <Image
+                          src={"./photo3.svg"}
+                          alt=""
+                          width={100}
+                          height={100}
+                          className="h-full w-full"
+                        />
+                      </div>
+                      <input
+                        className="iz-[2] h-8 w-8 rounded-full opacity-0"
+                        type="file"
+                        accept="image/*,video/*"
+                        onChange={(e) => handleFileUpload(e)}
+                        disabled={loading || !!fileData}
                       />
-                    </div>
-                    <input
-                      className="iz-[2] h-8 w-8 rounded-full opacity-0"
-                      type="file"
-                      accept="image/*,video/*"
-                      onChange={(e) => handleFileUpload(e)}
-                      disabled={loading || !!fileData}
-                    />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="top"
-                  align="start"
-                  className="border-primary border bg-black"
-                >
-                  <p className="text-white">Imagem ou video</p>
-                  <TooltipArrow className="fill-primary" />
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    align="start"
+                    className="border-primary border bg-black"
+                  >
+                    <p className="text-white">Imagem ou video</p>
+                    <TooltipArrow className="fill-primary" />
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
             <label
               onClick={() => setIsClicked(true)}
-              className="flex h-11 w-full items-center rounded-lg border border-zinc-500 px-4 py-2"
+              className="flex h-full flex-1 items-center rounded-lg border border-zinc-500 px-2 py-2 md:h-11 md:px-4"
             >
               {fileData && fileData.mimeType.startsWith("audio/") ? (
                 <>
@@ -377,7 +382,7 @@ export function Section() {
                   {fileData?.mimeType.startsWith("audio/") ? (
                     <Send className="text-zinc-500" />
                   ) : isRecording ? (
-                    <X className="text-zinc-500" />
+                    <Square className="text-zinc-500" />
                   ) : (
                     <Mic className="text-zinc-500" />
                   )}
