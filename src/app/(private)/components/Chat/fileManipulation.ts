@@ -9,17 +9,18 @@ type FileData = {
 
 export function useFileHandler() {
   const [fileData, setFileData] = useState<FileData | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null,
   );
-  const [isRecording, setIsRecording] = useState(false);
-  const clearFileData = () => setFileData(null);
+  const [recordStartTime, setRecordStartTime] = useState<number | null>(null);
+  const [elapsedTime, setElapsedTime] = useState("00:00");
+  const chunksRef = useRef<Blob[]>([]);
 
+  /* ---------- utilidades ---------- */
   const fileToBase64 = (file: File): Promise<FileData> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.readAsDataURL(file);
       reader.onload = () => {
         if (typeof reader.result === "string") {
           const [, base64] = reader.result.split(",");
@@ -27,8 +28,23 @@ export function useFileHandler() {
         } else reject(new Error("Unexpected format"));
       };
       reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
 
+  const pickMimeType = () => {
+    if (typeof MediaRecorder === "undefined") return undefined;
+    const prefer = [
+      "audio/webm;codecs=opus",
+      "audio/webm",
+      "audio/mp4",
+      "audio/aac",
+    ];
+    return prefer.find(MediaRecorder.isTypeSupported);
+  };
+
+  const clearFileData = () => setFileData(null);
+
+  /* ---------- upload manual ---------- */
   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || file.size >= 20_000_000) return;
@@ -36,42 +52,58 @@ export function useFileHandler() {
     setFileData({ ...fd, name: file.name });
     e.target.value = "";
   };
-  const [recordStartTime, setRecordStartTime] = useState<number | null>(null);
-  const [elapsedTime, setElapsedTime] = useState("00:00");
+
+  /* ---------- timer estilo gravador ---------- */
   useEffect(() => {
-    let intervalId: ReturnType<typeof setInterval>;
-    if (recordStartTime && isRecording) {
-      intervalId = setInterval(() => {
-        const elapsedTime = (Date.now() - recordStartTime) / 1000;
-        const minutes = Math.floor(elapsedTime / 60);
-        const seconds = Math.floor(elapsedTime % 60);
-        setElapsedTime(
-          `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
-        );
-      }, 100);
-    }
-    return () => clearInterval(intervalId);
-  }, [recordStartTime, isRecording]);
-  const startRecording = async () => {
-    setIsRecording(true);
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
-    chunksRef.current = [];
-    recorder.ondataavailable = (e) =>
-      e.data.size && chunksRef.current.push(e.data);
-    recorder.onstop = () => {
-      const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        const b64 = result.split(",")[1];
-        setFileData({ dataUrl: result, base64: b64, mimeType: blob.type });
+    if (!isRecording || !recordStartTime) return;
+    const id = setInterval(() => {
+      const delta = Math.floor((Date.now() - recordStartTime) / 1000);
+      const mm = String(Math.floor(delta / 60)).padStart(2, "0");
+      const ss = String(delta % 60).padStart(2, "0");
+      setElapsedTime(`${mm}:${ss}`);
+    }, 200);
+    return () => clearInterval(id);
+  }, [isRecording, recordStartTime]);
+
+  /* ---------- gravação ---------- */
+  const startRecording = async (): Promise<boolean> => {
+    try {
+      if (!navigator.mediaDevices?.getUserMedia)
+        throw new Error("getUserMedia indisponível");
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = pickMimeType();
+      const rec = mimeType
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
+
+      chunksRef.current = [];
+
+      rec.ondataavailable = (e) =>
+        e.data.size && chunksRef.current.push(e.data);
+      rec.onstop = () => {
+        const blob = new Blob(chunksRef.current, {
+          type: mimeType ?? "audio/webm",
+        });
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const result = reader.result as string;
+          const [, b64] = result.split(",");
+          setFileData({ dataUrl: result, base64: b64, mimeType: blob.type });
+        };
+        reader.readAsDataURL(blob);
+        /* libera o microfone */
+        stream.getTracks().forEach((t) => t.stop());
       };
-    };
-    recorder.start();
-    setMediaRecorder(recorder);
-    setRecordStartTime(Date.now());
+
+      rec.start();
+      setMediaRecorder(rec);
+      setIsRecording(true);
+      setRecordStartTime(Date.now());
+      return true;
+    } catch (err) {
+      console.error("Falha ao iniciar gravação:", err);
+      return false; // sinaliza para o componente se quiser mostrar toast/alerta
+    }
   };
 
   const stopRecording = () => {
@@ -80,20 +112,26 @@ export function useFileHandler() {
     setRecordStartTime(null);
     setElapsedTime("00:00");
   };
+
   const cancelRecording = () => {
     if (mediaRecorder?.state === "recording") mediaRecorder.stop();
     chunksRef.current = [];
     clearFileData();
+    setIsRecording(false);
+    setElapsedTime("00:00");
   };
 
+  /* ---------- retorno ---------- */
   return {
+    /* dados */
     fileData,
     elapsedTime,
+    isRecording,
+    /* ações externas */
     handleFileUpload,
     startRecording,
     stopRecording,
     cancelRecording,
     clearFileData,
-    isRecording,
   };
 }
