@@ -210,9 +210,7 @@ export function Section() {
                               <span>{message.name}</span>
                             </a>
                           ) : (
-                            <span className="text-xs font-semibold xl:text-base">
-                              {message.content}
-                            </span>
+                            <span className="text-xs">{message.content}</span>
                           )}
                         </div>
                         <Image
@@ -234,7 +232,7 @@ export function Section() {
                         />
                         <div className="flex flex-col text-[10px] text-white 2xl:text-base">
                           <span className="mr-auto w-max">
-                            Executivos Digital
+                            Executivo&apos;s Digital
                           </span>
                           {message.content === "..." ? (
                             <div className="mt-2 flex items-center justify-center space-x-2">
@@ -261,7 +259,7 @@ export function Section() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button className="relative flex h-6 w-6 items-center justify-center overflow-hidden rounded-lg border border-zinc-500 p-0.5 2xl:h-11 2xl:w-11">
+                    <button className="relative flex h-10 w-6 items-center justify-center overflow-hidden rounded-lg border border-zinc-500 p-0.5 md:h-8 2xl:h-11 2xl:w-11">
                       <Image
                         src={"./pdf3.svg"}
                         alt=""
@@ -291,7 +289,7 @@ export function Section() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button className="relative flex h-6 w-6 items-center justify-center rounded-lg border border-zinc-500 p-0.5 2xl:h-11 2xl:w-11">
+                    <button className="relative flex h-10 w-6 items-center justify-center rounded-lg border border-zinc-500 p-0.5 md:h-8 2xl:h-11 2xl:w-11">
                       <Image
                         src={"./photo3.svg"}
                         alt=""
@@ -313,7 +311,7 @@ export function Section() {
                     align="start"
                     className="border-primary border bg-black"
                   >
-                    <p className="text-white">Imagem ou video</p>
+                    <p className="text-white">Imagem ou Vídeo</p>
                     <TooltipArrow className="fill-primary" />
                   </TooltipContent>
                 </Tooltip>
@@ -322,7 +320,7 @@ export function Section() {
 
             <label
               onClick={() => setIsClicked(true)}
-              className="flex h-6 w-full flex-1 items-center justify-between overflow-hidden rounded-lg border border-zinc-500 pl-2 2xl:h-11 2xl:pr-2 2xl:pl-4"
+              className="flex h-10 w-full flex-1 items-center justify-between overflow-hidden rounded-lg border border-zinc-500 pl-2 md:h-8 2xl:h-11 2xl:pr-2 2xl:pl-4"
             >
               {fileData && fileData.mimeType.startsWith("audio/") ? (
                 <>
@@ -338,7 +336,7 @@ export function Section() {
               ) : (
                 <div className="flex max-w-[60%] flex-1 flex-row items-center gap-1">
                   <input
-                    className="flex-1 border-none text-[16px] text-white outline-none placeholder:text-zinc-500 focus:outline-none 2xl:text-base"
+                    className="flex-1 border-none text-[16px] text-white outline-none placeholder:text-zinc-500 focus:outline-none md:text-[12px] 2xl:text-base"
                     placeholder="Digite aqui sua ideia"
                     disabled={isRecording || loading}
                     value={inputMessage}
@@ -358,7 +356,9 @@ export function Section() {
                 className="flex h-full items-center gap-2 text-white"
                 disabled={loading}
                 onClick={() => {
-                  if (fileData?.mimeType.startsWith("audio/")) {
+                  if (inputMessage !== "") {
+                    sendMessage(inputMessage);
+                  } else if (fileData?.mimeType.startsWith("audio/")) {
                     console.log("entrou");
                     handleSendFile();
                   } else if (isRecording) {
@@ -371,7 +371,9 @@ export function Section() {
                 }}
               >
                 {isRecording && elapsedTime}
-                {fileData?.mimeType.startsWith("audio/") ? (
+                {inputMessage !== "" ? (
+                  <Send className="h-4 text-zinc-500 2xl:h-8" />
+                ) : fileData?.mimeType.startsWith("audio/") ? (
                   <Send className="h-4 text-zinc-500 2xl:h-8" />
                 ) : isRecording ? (
                   <Square className="h-4 text-zinc-500 2xl:h-8" />
