@@ -1,7 +1,7 @@
+import { ContextProviders } from "@/context/ContextProviders";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { ContextProviders } from "@/context/ContextProviders";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -21,6 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+      />
       <body className={`${poppins.variable}`}>
         <ContextProviders>{children}</ContextProviders>
       </body>

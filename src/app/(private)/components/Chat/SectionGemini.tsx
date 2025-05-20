@@ -322,12 +322,12 @@ export function Section() {
 
             <label
               onClick={() => setIsClicked(true)}
-              className="flex h-6 flex-1 items-center overflow-hidden rounded-lg border border-zinc-500 pl-2 2xl:h-11 2xl:pr-2 2xl:pl-4"
+              className="flex h-6 w-full flex-1 items-center justify-between overflow-hidden rounded-lg border border-zinc-500 pl-2 2xl:h-11 2xl:pr-2 2xl:pl-4"
             >
               {fileData && fileData.mimeType.startsWith("audio/") ? (
                 <>
                   <AudioPlayer
-                    className="ai flex-1"
+                    className="ai h-5 max-h-5 flex-1 2xl:h-8"
                     size="default"
                     audioUrl={fileData.dataUrl}
                   />
@@ -336,9 +336,9 @@ export function Section() {
                   </button>
                 </>
               ) : (
-                <div className="flex flex-1 flex-row items-center gap-1">
+                <div className="flex max-w-[60%] flex-1 flex-row items-center gap-1">
                   <input
-                    className="flex-1 border-none bg-transparent text-[10px] text-white outline-none placeholder:text-zinc-500 focus:outline-none 2xl:text-base"
+                    className="flex-1 border-none text-[16px] text-white outline-none placeholder:text-zinc-500 focus:outline-none 2xl:text-base"
                     placeholder="Digite aqui sua ideia"
                     disabled={isRecording || loading}
                     value={inputMessage}
@@ -355,7 +355,7 @@ export function Section() {
               )}
 
               <button
-                className="flex h-full w-max items-center gap-2 text-white"
+                className="flex h-full items-center gap-2 text-white"
                 disabled={loading}
                 onClick={() => {
                   if (fileData?.mimeType.startsWith("audio/")) {
