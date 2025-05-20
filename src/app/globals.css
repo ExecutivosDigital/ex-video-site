@@ -6,6 +6,10 @@
   --font-manrope: "Manrope", sans-serif;
 
   --color-primary: #f7ce46;
+  --breakpoint-xl: 1360px;
+  --breakpoint-2xl: 1920px;
+  --breakpoint-3xl: 2560px;
+  --breakpoint-4xl: 3840px;
 
   /* --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-accordion-down: accordion-down 0.2s ease-out;

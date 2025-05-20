@@ -101,9 +101,9 @@ export function Section() {
     console.log("aqui", isRecording);
   }, [isRecording]);
   return (
-    <div className="h-[calc(100vh-80px)] w-full p-2 xl:h-[calc(100vh-112px)] xl:p-8">
-      <div className="flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-[url('/image.png')] bg-cover bg-center bg-no-repeat p-2 lg:p-4 xl:flex-row xl:gap-8 xl:p-8 2xl:gap-20 2xl:p-20">
-        <div className="h-2/5 w-full rounded-lg bg-white xl:h-full xl:w-[600px]">
+    <div className="3xl:bg-red-500 h-[calc(100vh-80px)] w-full p-2 2xl:h-[calc(100vh-112px)] 2xl:p-8 2xl:pb-0">
+      <div className="flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-[url('/image.png')] bg-cover bg-center bg-no-repeat p-2 lg:flex-row lg:gap-4 lg:p-4 xl:p-8 2xl:gap-20 2xl:p-20">
+        <div className="3xl:w-[800px] h-2/5 w-full rounded-lg lg:h-full lg:w-[400px] 2xl:w-[600px]">
           <iframe
             width="100%"
             height="100%"
@@ -115,13 +115,13 @@ export function Section() {
             allowFullScreen
           />
         </div>
-        <div className="flex h-full w-full flex-1 flex-col justify-end rounded-lg border border-zinc-500 p-2 xl:p-8">
+        <div className="flex h-full w-full flex-1 flex-col justify-end rounded-lg border border-zinc-500 p-2 2xl:p-8">
           <div className="relative flex h-full w-full flex-col">
             <div
               className={cn(
                 "absolute left-1/2 z-10 flex -translate-x-1/2 flex-col items-center justify-center gap-4 transition duration-1000",
                 isClicked
-                  ? "-translate-y-5 xl:-translate-y-2/5"
+                  ? "-translate-y-5 2xl:-translate-y-2/5"
                   : "translate-y-1/2",
               )}
             >
@@ -130,7 +130,7 @@ export function Section() {
                 alt=""
                 width={1000}
                 height={1000}
-                className="shadow-primary h-10 w-10 rounded-full shadow-lg lg:h-20 lg:w-20 2xl:h-32 2xl:w-32"
+                className="shadow-primary h-10 w-10 rounded-full shadow-lg lg:h-14 lg:w-14 2xl:h-32 2xl:w-32"
               />
               <div
                 className={cn(
@@ -166,7 +166,7 @@ export function Section() {
                     {message.role === "user" ? (
                       <div className="flex justify-end gap-2 text-end">
                         <div className="flex flex-col text-white">
-                          <span className="ml-auto w-max text-[10px] xl:text-base">
+                          <span className="ml-auto w-max text-[10px] 2xl:text-base">
                             Eu
                           </span>
                           {message.type?.includes("image") ? (
@@ -232,8 +232,8 @@ export function Section() {
                           height={250}
                           className="h-6 w-6 rounded-full xl:h-10 xl:w-10"
                         />
-                        <div className="flex flex-col text-white">
-                          <span className="mr-auto w-max text-[10px] xl:text-base">
+                        <div className="flex flex-col text-[10px] text-white 2xl:text-base">
+                          <span className="mr-auto w-max">
                             Executivos Digital
                           </span>
                           {message.content === "..." ? (
@@ -256,23 +256,21 @@ export function Section() {
               </ScrollArea>
             </div>
           </div>
-          <div className="flex w-full flex-row items-center gap-2">
-            <div className="flex flex-col items-center gap-1 md:flex-row">
+          <div className="flex w-full flex-row items-center gap-1">
+            <div className="flex flex-row items-center gap-1">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button className="relative flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-500 px-4 py-2 md:h-11 md:w-11">
-                      <div className="absolute flex h-full w-full items-center justify-center p-1 text-zinc-400">
-                        <Image
-                          src={"./pdf3.svg"}
-                          alt=""
-                          width={100}
-                          height={100}
-                          className="h-full w-full"
-                        />
-                      </div>
+                    <button className="relative flex h-6 w-6 items-center justify-center overflow-hidden rounded-lg border border-zinc-500 p-0.5 2xl:h-11 2xl:w-11">
+                      <Image
+                        src={"./pdf3.svg"}
+                        alt=""
+                        width={100}
+                        height={100}
+                        className="h-full w-full"
+                      />
                       <input
-                        className="z-[2] h-8 w-8 rounded-full opacity-0"
+                        className="absolute top-0 left-0 z-[2] h-full w-full opacity-0"
                         type="file"
                         accept="application/pdf*"
                         onChange={(e) => handleFileUpload(e)}
@@ -293,18 +291,16 @@ export function Section() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button className="relative flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-500 px-4 py-2 md:h-11 md:w-11">
-                      <div className="absolute flex h-full w-full items-center justify-center p-1">
-                        <Image
-                          src={"./photo3.svg"}
-                          alt=""
-                          width={100}
-                          height={100}
-                          className="h-full w-full"
-                        />
-                      </div>
+                    <button className="relative flex h-6 w-6 items-center justify-center rounded-lg border border-zinc-500 p-0.5 2xl:h-11 2xl:w-11">
+                      <Image
+                        src={"./photo3.svg"}
+                        alt=""
+                        width={100}
+                        height={100}
+                        className="h-full w-full"
+                      />
                       <input
-                        className="iz-[2] h-8 w-8 rounded-full opacity-0"
+                        className="iz-[2] absolute top-0 left-0 h-full w-full rounded-full opacity-0"
                         type="file"
                         accept="image/*,video/*"
                         onChange={(e) => handleFileUpload(e)}
@@ -326,7 +322,7 @@ export function Section() {
 
             <label
               onClick={() => setIsClicked(true)}
-              className="flex h-full flex-1 items-center rounded-lg border border-zinc-500 px-2 py-2 md:h-11 md:px-4"
+              className="flex h-6 flex-1 items-center overflow-hidden rounded-lg border border-zinc-500 pl-2 2xl:h-11 2xl:pr-2 2xl:pl-4"
             >
               {fileData && fileData.mimeType.startsWith("audio/") ? (
                 <>
@@ -335,17 +331,14 @@ export function Section() {
                     size="default"
                     audioUrl={fileData.dataUrl}
                   />
-                  <button
-                    onClick={() => clearFileData()}
-                    className="mr-2 ml-2 h-full rounded-full bg-zinc-500/20"
-                  >
-                    <X className="text-red-500" />
+                  <button onClick={() => clearFileData()}>
+                    <X className="h-4 text-red-500 2xl:h-8" />
                   </button>
                 </>
               ) : (
                 <div className="flex flex-1 flex-row items-center gap-1">
                   <input
-                    className="flex-1 border-none bg-transparent text-white outline-none placeholder:text-zinc-500 focus:outline-none"
+                    className="flex-1 border-none bg-transparent text-[10px] text-white outline-none placeholder:text-zinc-500 focus:outline-none 2xl:text-base"
                     placeholder="Digite aqui sua ideia"
                     disabled={isRecording || loading}
                     value={inputMessage}
@@ -361,33 +354,31 @@ export function Section() {
                 </div>
               )}
 
-              <div className="relative">
-                <button
-                  className="flex h-full w-full items-center gap-2 text-white"
-                  disabled={loading}
-                  onClick={() => {
-                    if (fileData?.mimeType.startsWith("audio/")) {
-                      console.log("entrou");
-                      handleSendFile();
-                    } else if (isRecording) {
-                      console.log("entrou2");
-                      stopRecording();
-                    } else {
-                      console.log("entrou3");
-                      startRecording();
-                    }
-                  }}
-                >
-                  {isRecording && elapsedTime}
-                  {fileData?.mimeType.startsWith("audio/") ? (
-                    <Send className="text-zinc-500" />
-                  ) : isRecording ? (
-                    <Square className="text-zinc-500" />
-                  ) : (
-                    <Mic className="text-zinc-500" />
-                  )}
-                </button>
-              </div>
+              <button
+                className="flex h-full w-max items-center gap-2 text-white"
+                disabled={loading}
+                onClick={() => {
+                  if (fileData?.mimeType.startsWith("audio/")) {
+                    console.log("entrou");
+                    handleSendFile();
+                  } else if (isRecording) {
+                    console.log("entrou2");
+                    stopRecording();
+                  } else {
+                    console.log("entrou3");
+                    startRecording();
+                  }
+                }}
+              >
+                {isRecording && elapsedTime}
+                {fileData?.mimeType.startsWith("audio/") ? (
+                  <Send className="h-4 text-zinc-500 2xl:h-8" />
+                ) : isRecording ? (
+                  <Square className="h-4 text-zinc-500 2xl:h-8" />
+                ) : (
+                  <Mic className="h-4 text-zinc-500 2xl:h-8" />
+                )}
+              </button>
             </label>
           </div>
         </div>

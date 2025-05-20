@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export function Header() {
   return (
-    <div className="flex h-20 w-full items-center justify-between border-b border-b-zinc-200 px-4 xl:h-28 xl:px-8">
+    <div className="flex h-16 w-full items-center justify-between border-b border-b-zinc-200 px-4 xl:h-20 2xl:h-28 2xl:px-8">
       <span className="font-manrope hidden text-2xl font-bold xl:block">
         SOLUÇÕES SOB MEDIDA
       </span>
@@ -12,7 +12,7 @@ export function Header() {
         alt=""
         width={1000}
         height={500}
-        className="h-16 w-max object-contain xl:h-20"
+        className="h-12 w-max object-contain xl:h-16"
       />
       <button
         onClick={() =>
@@ -21,7 +21,7 @@ export function Header() {
             "_blank",
           )
         }
-        className="font-manrope flex items-center gap-2 rounded-lg border border-black px-2 py-2 text-sm font-bold text-black xl:px-8 xl:text-base"
+        className="font-manrope flex cursor-pointer items-center gap-2 rounded-lg border border-black px-2 py-2 text-sm font-bold text-black xl:px-8 xl:text-base"
       >
         Fale Conosco
         <Image
