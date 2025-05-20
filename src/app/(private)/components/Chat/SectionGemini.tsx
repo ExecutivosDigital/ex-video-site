@@ -101,7 +101,7 @@ export function Section() {
     console.log("aqui", isRecording);
   }, [isRecording]);
   return (
-    <div className="3xl:bg-red-500 h-[calc(100vh-80px)] w-full p-2 2xl:h-[calc(100vh-112px)] 2xl:p-8 2xl:pb-0">
+    <div className="h-[calc(100vh-80px)] w-full p-2 2xl:h-[calc(100vh-112px)] 2xl:p-8">
       <div className="flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-[url('/image.png')] bg-cover bg-center bg-no-repeat p-2 lg:flex-row lg:gap-4 lg:p-4 xl:p-8 2xl:gap-20 2xl:p-20">
         <div className="3xl:w-[800px] h-2/5 w-full rounded-lg lg:h-full lg:w-[400px] 2xl:w-[600px]">
           <iframe
@@ -178,7 +178,7 @@ export function Section() {
                                 height={2500}
                                 className="h-40 w-auto rounded-md"
                               />
-                              <div className="bg-re-500 h-5 w-5" />
+                              <div className="h-5 w-5" />
                             </>
                           ) : message.type?.includes("audio") ? (
                             <div className="flex p-2">
