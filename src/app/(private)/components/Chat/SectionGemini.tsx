@@ -1,8 +1,9 @@
 "use client";
 import { ScrollArea } from "@/components/scroll-area";
 import { cn } from "@/lib/utils";
-import Lottie, { LottieRefCurrentProps } from "lottie-react";
+import { LottieRefCurrentProps } from "lottie-react"; // Keep type import for LottieRefCurrentProps
 import { Mic, Send, Square, X } from "lucide-react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -20,6 +21,13 @@ import {
   TooltipTrigger,
 } from "./tooltip";
 import { Message } from "./types";
+
+// Dynamically import the Lottie component to prevent SSR issues
+const LottiePlayer = dynamic(() => import("lottie-react"), {
+  ssr: false,
+  // You can add a loading component here if needed:
+  // loading: () => <p>Loading animation...</p>,
+});
 
 export function Section() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -229,19 +237,7 @@ export function Section() {
       return () => video.removeEventListener("timeupdate", handleTimeUpdate);
     }
   }, [showStartButton, progress]);
-  useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      const handleTimeUpdate = () => {
-        const targetTime = 4 * 60 + 18; // 4 minutes and 18 seconds
-        if (video.currentTime >= targetTime) {
-          video.removeEventListener("timeupdate", handleTimeUpdate);
-        }
-      };
-      video.addEventListener("timeupdate", handleTimeUpdate);
-      return () => video.removeEventListener("timeupdate", handleTimeUpdate);
-    }
-  }, [showStartButton, progress]);
+  // Removed duplicate useEffect block that was identical to the one above
 
   const handleStartVideo = () => {
     if (videoRef.current) {
@@ -307,7 +303,7 @@ export function Section() {
               >
                 <div className="animate-scale bg-primary flex flex-col items-center justify-center gap-2 rounded-lg border border-white p-2 transition-all duration-1000">
                   Clique para assistir
-                  <Lottie
+                  <LottiePlayer
                     animationData={animationData}
                     loop={false}
                     lottieRef={lottieRef}
