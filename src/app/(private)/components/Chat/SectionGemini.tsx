@@ -212,7 +212,7 @@ export function Section() {
             autoPlay
             playsInline
             preload="auto"
-            muted
+            // muted
             loop
             onTimeUpdate={handleVideoStart} // Garante que a variável muda ao reproduzir
           />
