@@ -6,9 +6,9 @@ import Image from "next/image";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { AudioPlayer } from "./AudioPlayer";
+import { AudioPlayer } from "./AudioPlayer"; // Assuming this is a local component
 import { useFileHandler } from "./fileManipulation";
-import { analyzeFile, useChatSession } from "./geminiai";
+import { analyzeFile, handleFunctionCalls, useChatSession } from "./geminiai";
 import {
   Tooltip,
   TooltipArrow,
@@ -17,6 +17,7 @@ import {
   TooltipTrigger,
 } from "./tooltip";
 import { Message } from "./types";
+
 export function Section() {
   const [isClicked, setIsClicked] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -32,8 +33,9 @@ export function Section() {
     elapsedTime,
   } = useFileHandler();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const chatSessionRef = useRef<any | null>(null);
+  const chatSessionRef = useRef<any | null>(null); // TODO: Type this as GoogleGenerativeAI.ChatSession
   useChatSession(chatSessionRef);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const appendMessage = (msg: Message) => setMessages((prev) => [...prev, msg]);
   const handleSendFile = async () => {
     if (!fileData) return;
@@ -62,20 +64,99 @@ export function Section() {
   const sendMessage = async (text: string, isFile?: boolean) => {
     setInputMessage("");
     if (!isFile) {
+      // Append user message
       appendMessage({ role: "user", content: text });
+      // Append assistant placeholder message immediately
       appendMessage({ role: "assistant", content: "..." });
     }
 
     setLoading(true);
-    const res = await chatSessionRef.current.sendMessage({ message: text });
-    const reply = await res.text;
-    setMessages((prev) =>
+
+    try {
+      const initialResponse = await chatSessionRef.current.sendMessage({
+        message: text,
+      });
+
+      console.log("Initial API Response:", initialResponse);
+
+      let replyText = "";
+
+      if (
+        initialResponse.functionCalls &&
+        initialResponse.functionCalls.length > 0
+      ) {
+        console.log("Function calls received, handling...");
+        // Delegate function call handling to geminiai.ts
+        // handleFunctionCalls sends the tool response and waits for the model's text reply
+        replyText = await handleFunctionCalls(
+          initialResponse.functionCalls,
+          chatSessionRef.current,
+        );
+      } else if (initialResponse.text) {
+        // If no function calls, use the direct text response
+        replyText = initialResponse.text;
+      } else {
+        // Handle cases with no text or function calls (unexpected)
+        console.warn(
+          "Received response with no text or function calls:",
+          initialResponse,
+        );
+        replyText = "Received an unexpected response from the AI.";
+      }
+
+      // Update the last message (the placeholder "...") with the actual reply
+      // Find the last message that is the placeholder and update it
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        const lastPlaceholderIndex = newMessages.findLastIndex(
+          (m) => m.content === "...",
+        );
+        if (lastPlaceholderIndex !== -1) {
+          newMessages[lastPlaceholderIndex] = {
+            ...newMessages[lastPlaceholderIndex],
+            content: replyText as string,
+          };
+        } else {
+          // Fallback: just append the reply if placeholder not found (shouldn't happen with current logic)
+          newMessages.push({ role: "assistant", content: replyText as string });
+        }
+        return newMessages;
+      });
+    } catch (error: any) {
+      console.error("Error sending message or handling response:", error);
+      // Find and update the specific placeholder message with an error
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        const lastPlaceholderIndex = newMessages.findLastIndex(
+          (m) => m.content === "...",
+        );
+        const errorMessage = `Error: ${error.message || "An unknown error occurred."}`;
+        if (lastPlaceholderIndex !== -1) {
+          newMessages[lastPlaceholderIndex] = {
+            ...newMessages[lastPlaceholderIndex],
+            content: errorMessage,
+          };
+        } else {
+          // Fallback: just append the error if placeholder not found
+          newMessages.push({ role: "assistant", content: errorMessage });
+        }
+        return newMessages;
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Old update logic - replaced by the logic inside the try/catch/finally block
+  /*
+  setMessages((prev) =>
       prev.map((m) =>
         m.content === "..." ? { ...m, content: reply as string } : m,
       ),
     );
     setLoading(false);
   };
+  */
   useEffect(() => {
     if (fileData) {
       if (fileData.mimeType.startsWith("audio/")) {
@@ -100,10 +181,18 @@ export function Section() {
   useEffect(() => {
     console.log("aqui", isRecording);
   }, [isRecording]);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   return (
     <div className="h-[calc(100vh-80px)] w-full p-2 2xl:h-[calc(100vh-112px)] 2xl:p-8">
-      <div className="flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-[url('/image.png')] bg-cover bg-center bg-no-repeat p-2 lg:flex-row lg:gap-4 lg:p-4 xl:p-8 2xl:gap-20 2xl:p-20">
-        <div className="3xl:w-[800px] h-2/5 w-full rounded-lg lg:h-full lg:w-[400px] 2xl:w-[600px]">
+      <div className="relative flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-[url('/image.png')] bg-cover bg-center bg-no-repeat p-2 lg:flex-row lg:gap-4 lg:p-4 xl:p-8 2xl:gap-20 2xl:p-20">
+        <div className="absolute left-0 h-full w-full rounded-lg bg-black/50" />
+        <div className="3xl:w-[800px] z-10 h-2/5 w-full rounded-lg lg:h-full lg:w-[400px] 2xl:w-[600px]">
           <iframe
             width="100%"
             height="100%"
@@ -115,7 +204,7 @@ export function Section() {
             allowFullScreen
           />
         </div>
-        <div className="flex h-full w-full flex-1 flex-col justify-end rounded-lg border border-zinc-500 p-2 2xl:p-8">
+        <div className="z-10 flex h-full w-full flex-1 flex-col justify-end rounded-lg border border-zinc-500 p-2 2xl:p-8">
           <div className="relative flex h-full w-full flex-col">
             <div
               className={cn(
@@ -154,7 +243,7 @@ export function Section() {
                 isClicked ? "opacity-100" : "opacity-0",
               )}
             >
-              <ScrollArea className="h-full w-full pt-5 pb-2 xl:pt-0">
+              <ScrollArea className="h-full w-full flex-col pt-5 pb-2 xl:pt-0">
                 {messages.map((message, index) => (
                   <div
                     key={index}
@@ -210,7 +299,9 @@ export function Section() {
                               <span>{message.name}</span>
                             </a>
                           ) : (
-                            <span className="text-xs">{message.content}</span>
+                            <span className="text-xs lg:text-base">
+                              {message.content}
+                            </span>
                           )}
                         </div>
                         <Image
@@ -222,7 +313,7 @@ export function Section() {
                         />
                       </div>
                     ) : (
-                      <div className="flex justify-start gap-2 text-start">
+                      <div className="my-4 flex justify-start gap-2 text-start">
                         <Image
                           src="/logo-badge.png"
                           alt=""
@@ -251,6 +342,7 @@ export function Section() {
                     )}
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
               </ScrollArea>
             </div>
           </div>

@@ -13,8 +13,9 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@google/genai": "^0.14.1",
+    "@google/genai": "^1.0.0",
     "@next/env": "^15.3.0",
+    "@next/third-parties": "^15.3.2",
     "@radix-ui/react-popover": "^1.1.13",
     "@radix-ui/react-scroll-area": "^1.2.8",
     "@radix-ui/react-tooltip": "^1.2.6",

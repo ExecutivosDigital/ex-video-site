@@ -311,10 +311,10 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.9.tgz#50dea3616bc8191fb8e112283b49eaff03e78429"
   integrity sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==
 
-"@google/genai@^0.14.1":
-  version "0.14.1"
-  resolved "https://registry.yarnpkg.com/@google/genai/-/genai-0.14.1.tgz#41e94275cbed54b81683e6755c37857fba98da1f"
-  integrity sha512-BZ93j4XcvsLEX5RkYE1RqrXLpuzEuH5VGY0geRrHjfpLP3ijDepGePg/iJ7kMSPOTXFYNMeTruNyoTB6TXXgnA==
+"@google/genai@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@google/genai/-/genai-1.0.0.tgz#ab962f3f46a3163d17cbc4f3ae827d340c039e0c"
+  integrity sha512-IQiL8UlPblGDrMhTuiHZbfMDVx0KY3eYkmB5Ro9wwyXovYCFIhL5ZC7LP42FjFUj0eWUa4Auo8Ixqf2dqx9JjA==
   dependencies:
     google-auth-library "^9.14.2"
     ws "^8.18.0"
@@ -541,6 +541,13 @@
   version "15.2.2"
   resolved "https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-15.2.2.tgz"
   integrity sha512-52nWy65S/R6/kejz3jpvHAjZDPKIbEQu4x9jDBzmB9jJfuOy5rspjKu4u77+fI4M/WzLXrrQd57hlFGzz1ubcQ==
+
+"@next/third-parties@^15.3.2":
+  version "15.3.2"
+  resolved "https://registry.yarnpkg.com/@next/third-parties/-/third-parties-15.3.2.tgz#194cc7cc48b72d8ab27515dc574fef2d00901ce9"
+  integrity sha512-zE9xYkMKZ6gLbkP6lWt60yaeKB5r0A4eZhFKAhgik/eO+zzZPFkTy5K7+0ykgfB6MTkcend3BaDXZhz9KnDjYw==
+  dependencies:
+    third-party-capital "1.0.20"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -5216,6 +5223,11 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.npmjs.org/text-table/-/text-table-0.2.0.tgz"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
+
+third-party-capital@1.0.20:
+  version "1.0.20"
+  resolved "https://registry.yarnpkg.com/third-party-capital/-/third-party-capital-1.0.20.tgz#e218a929a35bf4d2245da9addb8ab978d2f41685"
+  integrity sha512-oB7yIimd8SuGptespDAZnNkzIz+NWaJCu2RMsbs4Wmp9zSDUM8Nhi3s2OOcqYuv3mN4hitXc8DVx+LyUmbUDiA==
 
 "through@>=2.2.7 <3":
   version "2.3.8"
