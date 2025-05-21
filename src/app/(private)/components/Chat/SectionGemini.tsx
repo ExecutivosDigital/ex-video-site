@@ -188,20 +188,33 @@ export function Section() {
     }
   }, [messages]);
 
+  const [isVideoStarted, setIsVideoStarted] = useState(false);
+
+  const handleVideoStart = (
+    event: React.SyntheticEvent<HTMLVideoElement, Event>,
+  ) => {
+    const videoElement = event.target as HTMLVideoElement;
+
+    // Verifica se o vídeo está carregado e começou a tocar
+    if ((videoElement as HTMLVideoElement).currentTime > 0) {
+      setIsVideoStarted(true);
+    }
+  };
+
   return (
     <div className="h-[calc(100vh-80px)] w-full p-2 2xl:h-[calc(100vh-112px)] 2xl:p-8">
       <div className="relative flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-[url('/image.png')] bg-cover bg-center bg-no-repeat p-2 lg:flex-row lg:gap-4 lg:p-4 xl:p-8 2xl:gap-20 2xl:p-20">
         <div className="absolute left-0 h-full w-full rounded-lg bg-black/50" />
         <div className="3xl:w-[800px] z-10 h-2/5 w-full rounded-lg lg:h-full lg:w-[400px] 2xl:w-[600px]">
-          <iframe
-            width="100%"
-            height="100%"
-            className="h-full w-full rounded-lg"
-            src="https://www.youtube.com/embed/uaS75cHC3iU?si=ryeyLyGlW_Hc2ryO?&autoplay=1"
-            title="YouTube video player"
-            allow="autoplay"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
+          <video
+            className="h-full w-full rounded-lg object-cover"
+            src={"/VSL.mov"}
+            autoPlay
+            playsInline
+            preload="auto"
+            // muted
+            loop
+            onTimeUpdate={handleVideoStart} // Garante que a variável muda ao reproduzir
           />
         </div>
         <div className="z-10 flex h-full w-full flex-1 flex-col justify-end rounded-lg border border-zinc-500 p-2 2xl:p-8">
