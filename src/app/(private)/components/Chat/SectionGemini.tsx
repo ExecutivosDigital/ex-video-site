@@ -1,14 +1,17 @@
 "use client";
 import { ScrollArea } from "@/components/scroll-area";
 import { cn } from "@/lib/utils";
+import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import { Mic, Send, Square, X } from "lucide-react";
 import Image from "next/image";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import animationData from "../../../../../public/animation.json";
 import { AudioPlayer } from "./AudioPlayer"; // Assuming this is a local component
 import { useFileHandler } from "./fileManipulation";
 import { analyzeFile, handleFunctionCalls, useChatSession } from "./geminiai";
+
 import {
   Tooltip,
   TooltipArrow,
@@ -19,6 +22,10 @@ import {
 import { Message } from "./types";
 
 export function Section() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [showStartButton, setShowStartButton] = useState(true);
   const [isClicked, setIsClicked] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
@@ -190,14 +197,91 @@ export function Section() {
 
   const [isVideoStarted, setIsVideoStarted] = useState(false);
 
-  const handleVideoStart = (
-    event: React.SyntheticEvent<HTMLVideoElement, Event>,
-  ) => {
-    const videoElement = event.target as HTMLVideoElement;
+  const updateProgress = () => {
+    if (videoRef.current) {
+      const time = videoRef.current.currentTime;
+      const duration = videoRef.current.duration;
+      if (duration) {
+        const normalizedProgress = Math.pow(time / duration, 0.5);
+        setProgress(normalizedProgress * 100);
+      }
+    }
+  };
 
-    // Verifica se o vídeo está carregado e começou a tocar
-    if ((videoElement as HTMLVideoElement).currentTime > 0) {
-      setIsVideoStarted(true);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.addEventListener("timeupdate", updateProgress);
+      return () => video.removeEventListener("timeupdate", updateProgress);
+    }
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      const handleTimeUpdate = () => {
+        const targetTime = 4 * 60 + 18; // 4 minutes and 18 seconds
+        if (video.currentTime >= targetTime) {
+          video.removeEventListener("timeupdate", handleTimeUpdate);
+        }
+      };
+      video.addEventListener("timeupdate", handleTimeUpdate);
+      return () => video.removeEventListener("timeupdate", handleTimeUpdate);
+    }
+  }, [showStartButton, progress]);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      const handleTimeUpdate = () => {
+        const targetTime = 4 * 60 + 18; // 4 minutes and 18 seconds
+        if (video.currentTime >= targetTime) {
+          video.removeEventListener("timeupdate", handleTimeUpdate);
+        }
+      };
+      video.addEventListener("timeupdate", handleTimeUpdate);
+      return () => video.removeEventListener("timeupdate", handleTimeUpdate);
+    }
+  }, [showStartButton, progress]);
+
+  const handleStartVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.muted = false;
+      videoRef.current.play();
+      setIsPlaying(true);
+      setShowStartButton(false);
+    }
+  };
+
+  const lottieRef = useRef<LottieRefCurrentProps | null>(null);
+  const [direction, setDirection] = useState(1);
+
+  useEffect(() => {
+    if (lottieRef.current) {
+      lottieRef.current.setSpeed(0.5);
+      lottieRef.current.setDirection(1);
+      lottieRef.current.play();
+    }
+  }, []);
+
+  const handleAnimationComplete = () => {
+    if (lottieRef.current) {
+      const newDirection = direction === 1 ? -1 : 1;
+      setDirection(newDirection);
+      lottieRef.current.setDirection(newDirection);
+      lottieRef.current.play();
+    }
+  };
+
+  const togglePlayPause = () => {
+    if (videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play();
+        setIsPlaying(true);
+      } else {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      }
     }
   };
 
@@ -206,16 +290,65 @@ export function Section() {
       <div className="relative flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-[url('/image.png')] bg-cover bg-center bg-no-repeat p-2 lg:flex-row lg:gap-4 lg:p-4 xl:p-8 2xl:gap-20 2xl:p-20">
         <div className="absolute left-0 h-full w-full rounded-lg bg-black/50" />
         <div className="3xl:w-[800px] z-10 h-2/5 w-full rounded-lg lg:h-full lg:w-[400px] 2xl:w-[600px]">
-          <video
-            className="h-full w-full rounded-lg object-cover"
-            src={"/VSL.mov"}
-            autoPlay
-            playsInline
-            preload="auto"
-            // muted
-            loop
-            onTimeUpdate={handleVideoStart} // Garante que a variável muda ao reproduzir
-          />
+          <div className="group relative h-full w-full overflow-hidden rounded-lg">
+            <video
+              ref={videoRef}
+              src="/VSL.mov"
+              className="absolute inset-0 h-full w-full object-cover"
+              autoPlay
+              loop={showStartButton}
+              muted
+              playsInline
+            />
+            {showStartButton && (
+              <button
+                className="bg-primary/10 absolute inset-0 z-10 m-auto flex h-full w-full items-center justify-center rounded-md text-lg font-bold text-white"
+                onClick={handleStartVideo}
+              >
+                <div className="animate-scale bg-primary flex flex-col items-center justify-center gap-2 rounded-lg border border-white p-2 transition-all duration-1000">
+                  Clique para assistir
+                  <Lottie
+                    animationData={animationData}
+                    loop={false}
+                    lottieRef={lottieRef}
+                    onComplete={handleAnimationComplete}
+                  />
+                </div>
+              </button>
+            )}
+
+            {!showStartButton && (
+              <div className="absolute bottom-0 flex w-full flex-col items-start justify-start gap-4 bg-gradient-to-b from-transparent to-black">
+                <button
+                  className="ml-4 text-lg font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100"
+                  onClick={togglePlayPause}
+                >
+                  {isPlaying ? "⏸ " : "▶"}
+                </button>
+                <div className="relative z-10 h-2 w-full">
+                  <div
+                    className="bg-primary absolute top-0 left-0 z-10 h-full transition-all duration-[300ms]"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="absolute bottom-0 flex w-full flex-col items-start justify-start gap-4 bg-gradient-to-b from-transparent to-black">
+              <button
+                className="ml-4 text-lg font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100"
+                onClick={togglePlayPause}
+              >
+                {isPlaying ? "⏸ " : "▶"}
+              </button>
+              <div className="relative h-2 w-full">
+                <div
+                  className="bg-primary absolute top-0 left-0 h-full transition-all duration-[300ms]"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
         <div className="z-10 flex h-full w-full flex-1 flex-col justify-end rounded-lg border border-zinc-500 p-2 2xl:p-8">
           <div className="relative flex h-full w-full flex-col">
