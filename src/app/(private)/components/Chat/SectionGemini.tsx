@@ -294,7 +294,7 @@ export function Section() {
       }
     }
   };
-  const [volume, setVolume] = useState(1);
+  const [volume, setVolume] = useState(0.6);
 
   // sempre que mudar volume, atualiza o elemento de vídeo
   useEffect(() => {
@@ -328,7 +328,7 @@ export function Section() {
                 className="bg-primary/10 absolute inset-0 z-10 m-auto flex h-full w-full items-center justify-center rounded-md text-lg font-bold text-white"
                 onClick={handleStartVideo}
               >
-                <div className="animate-scale bg-primary flex flex-col items-center justify-center gap-2 rounded-lg border border-white p-2 transition-all duration-1000">
+                <div className="animate-scale bg-primary flex flex-col items-center justify-center gap-2 rounded-lg border border-white p-2 text-black transition-all duration-1000">
                   Clique para assistir
                   <LottiePlayer
                     animationData={animationData}
@@ -344,7 +344,7 @@ export function Section() {
                 className="bg-primary/10 absolute inset-0 z-10 m-auto flex h-full w-full items-center justify-center rounded-md text-lg font-bold text-white"
                 onClick={handleStartVideo}
               >
-                <div className="animate-scale bg-primary flex flex-col items-center justify-center gap-2 rounded-lg border border-white p-2 transition-all duration-1000">
+                <div className="animate-scale bg-primary flex flex-col items-center justify-center gap-2 rounded-lg border border-white p-2 text-black transition-all duration-1000">
                   Assistir Novamente
                   <LottiePlayer
                     animationData={animationData}
