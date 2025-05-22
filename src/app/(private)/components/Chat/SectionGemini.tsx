@@ -685,21 +685,23 @@ export function Section() {
                   </button>
                 </>
               ) : (
-                <div className="flex flex-1 flex-row items-center gap-1">
-                  <input
-                    className="xs:max-w-[40%] max-w-[60%] flex-1 border-none text-[16px] text-white outline-none placeholder:text-zinc-500 focus:outline-none md:max-w-full md:text-[12px] 2xl:text-base"
-                    placeholder="Digite aqui sua ideia"
-                    disabled={isRecording || loading}
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        sendMessage(inputMessage);
-                        setInputMessage("");
-                      }
-                    }}
-                  />
+                <div className="flex flex-1 flex-row items-center gap-1 p-0.5">
+                  {!isRecording && (
+                    <textarea
+                      className="h-7 w-full flex-1 resize-none border-none p-0.5 text-[16px] text-white outline-none placeholder:text-zinc-500 focus:outline-none md:h-6 md:max-w-full md:text-[12px] 2xl:text-base"
+                      placeholder="Digite aqui sua ideia"
+                      disabled={isRecording || loading}
+                      value={inputMessage}
+                      onChange={(e) => setInputMessage(e.target.value)}
+                      onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          sendMessage(inputMessage);
+                          setInputMessage("");
+                        }
+                      }}
+                    />
+                  )}
                 </div>
               )}
 
