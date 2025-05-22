@@ -723,11 +723,14 @@ export function Section() {
               >
                 {isRecording && elapsedTime}
                 {inputMessage !== "" ? (
-                  <Send className="h-4 text-zinc-500 2xl:h-8" />
+                  <Send className="text-primary h-4 2xl:h-8" />
                 ) : fileData?.mimeType.startsWith("audio/") ? (
-                  <Send className="h-4 text-zinc-500 2xl:h-8" />
+                  <Send className="text-primary h-4 2xl:h-8" />
                 ) : isRecording ? (
-                  <Square className="h-4 animate-pulse text-red-500 2xl:h-8" />
+                  <Square
+                    fill="#f7ce46"
+                    className="h-4 animate-pulse 2xl:h-8"
+                  />
                 ) : (
                   <Mic className="h-4 text-zinc-500 2xl:h-8" />
                 )}
