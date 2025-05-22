@@ -2,7 +2,16 @@
 import { ScrollArea } from "@/components/scroll-area";
 import { cn } from "@/lib/utils";
 import { LottieRefCurrentProps } from "lottie-react"; // Keep type import for LottieRefCurrentProps
-import { Mic, Send, Square, X } from "lucide-react";
+import {
+  File,
+  Mic,
+  Pause,
+  PlayIcon,
+  Send,
+  Square,
+  Volume2,
+  X,
+} from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
@@ -13,6 +22,12 @@ import { AudioPlayer } from "./AudioPlayer"; // Assuming this is a local compone
 import { useFileHandler } from "./fileManipulation";
 import { analyzeFile, handleFunctionCalls, useChatSession } from "./geminiai";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../dropdown-menu";
 import {
   Tooltip,
   TooltipArrow,
@@ -196,14 +211,13 @@ export function Section() {
   useEffect(() => {
     console.log("aqui", isRecording);
   }, [isRecording]);
-
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth", // ou "smooth", se preferir animado
+      block: "end", // <-- garante que ficará colado embaixo
+      inline: "nearest",
+    });
   }, [messages]);
-
-  const [isVideoStarted, setIsVideoStarted] = useState(false);
 
   const updateProgress = () => {
     if (videoRef.current) {
@@ -280,7 +294,19 @@ export function Section() {
       }
     }
   };
+  const [volume, setVolume] = useState(1);
 
+  // sempre que mudar volume, atualiza o elemento de vídeo
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  // converte valor da slider (0–100) para 0.0–1.0
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVolume(e.target.valueAsNumber / 100);
+  };
   return (
     <div className="h-[calc(100vh-80px)] w-full p-2 2xl:h-[calc(100vh-112px)] 2xl:p-8">
       <div className="relative flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-[url('/image.png')] bg-cover bg-center bg-no-repeat p-2 lg:flex-row lg:gap-4 lg:p-4 xl:p-8 2xl:gap-20 2xl:p-20">
@@ -289,13 +315,14 @@ export function Section() {
           <div className="group relative h-full w-full overflow-hidden rounded-lg">
             <video
               ref={videoRef}
-              src="/VSL.mov"
+              src="/VSL2.mp4"
               className="absolute inset-0 h-full w-full object-cover"
               autoPlay
               loop={showStartButton}
               muted
               playsInline
             />
+
             {showStartButton && (
               <button
                 className="bg-primary/10 absolute inset-0 z-10 m-auto flex h-full w-full items-center justify-center rounded-md text-lg font-bold text-white"
@@ -312,15 +339,46 @@ export function Section() {
                 </div>
               </button>
             )}
+            {progress === 100 && (
+              <button
+                className="bg-primary/10 absolute inset-0 z-10 m-auto flex h-full w-full items-center justify-center rounded-md text-lg font-bold text-white"
+                onClick={handleStartVideo}
+              >
+                <div className="animate-scale bg-primary flex flex-col items-center justify-center gap-2 rounded-lg border border-white p-2 transition-all duration-1000">
+                  Assistir Novamente
+                  <LottiePlayer
+                    animationData={animationData}
+                    loop={false}
+                    lottieRef={lottieRef}
+                    onComplete={handleAnimationComplete}
+                  />
+                </div>
+              </button>
+            )}
 
             {!showStartButton && (
               <div className="absolute bottom-0 flex w-full flex-col items-start justify-start gap-4 bg-gradient-to-b from-transparent to-black">
-                <button
-                  className="ml-4 text-lg font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100"
-                  onClick={togglePlayPause}
-                >
-                  {isPlaying ? "⏸ " : "▶"}
-                </button>
+                <div className="item-center flex flex-row gap-4">
+                  <button
+                    className="ml-4 text-lg font-bold text-white transition-all duration-300 group-hover:opacity-100 md:opacity-0"
+                    onClick={togglePlayPause}
+                  >
+                    {isPlaying ? <Pause /> : <PlayIcon />}
+                  </button>
+                  <div className="group z-20 hidden flex-row items-center gap-2 text-white md:flex">
+                    <Volume2 className="mr-2 h-6 w-6" />
+                    <input
+                      id="volume-slider"
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value={(volume * 100).toFixed(0)}
+                      onChange={handleSliderChange}
+                      className="range-slider h-2 w-full cursor-pointer appearance-none rounded-lg bg-black opacity-0 transition-all duration-300 group-hover:opacity-100"
+                    />
+                  </div>
+                </div>
                 <div className="relative z-10 h-2 w-full">
                   <div
                     className="bg-primary absolute top-0 left-0 z-10 h-full transition-all duration-[300ms]"
@@ -330,7 +388,7 @@ export function Section() {
               </div>
             )}
 
-            <div className="absolute bottom-0 flex w-full flex-col items-start justify-start gap-4 bg-gradient-to-b from-transparent to-black">
+            {/* <div className="absolute bottom-0 flex w-full flex-col items-start justify-start gap-4 bg-gradient-to-b from-transparent to-black">
               <button
                 className="ml-4 text-lg font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100"
                 onClick={togglePlayPause}
@@ -343,7 +401,7 @@ export function Section() {
                   style={{ width: `${progress}%` }}
                 />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="z-10 flex h-full w-full flex-1 flex-col justify-end rounded-lg border border-zinc-500 p-2 2xl:p-8">
@@ -397,7 +455,7 @@ export function Section() {
                     {message.role === "user" ? (
                       <div className="flex justify-end gap-2 text-end">
                         <div className="flex flex-col text-white">
-                          <span className="ml-auto w-max text-[10px] 2xl:text-base">
+                          <span className="ml-auto w-max text-[12px] 2xl:text-base">
                             Eu
                           </span>
                           {message.type?.includes("image") ? (
@@ -441,7 +499,7 @@ export function Section() {
                               <span>{message.name}</span>
                             </a>
                           ) : (
-                            <span className="text-xs lg:text-base">
+                            <span className="2xl:text-bas flex flex-col text-[12px] text-white">
                               {message.content}
                             </span>
                           )}
@@ -463,7 +521,7 @@ export function Section() {
                           height={250}
                           className="h-6 w-6 rounded-full xl:h-10 xl:w-10"
                         />
-                        <div className="flex flex-col text-[10px] text-white 2xl:text-base">
+                        <div className="flex flex-col text-[12px] text-white 2xl:text-base">
                           <span className="mr-auto w-max">
                             Executivo&apos;s Digital
                           </span>
@@ -489,7 +547,66 @@ export function Section() {
             </div>
           </div>
           <div className="flex w-full flex-row items-center gap-1">
-            <div className="flex flex-row items-center gap-1">
+            <div className="flex flex-row items-center gap-1 md:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="relative flex h-10 w-6 items-center justify-center overflow-hidden rounded-lg border border-zinc-500 p-0.5 md:h-8 2xl:h-11 2xl:w-11">
+                    <File color="white" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="border border-white/40 bg-black"
+                  align="start"
+                  side="top"
+                >
+                  <DropdownMenuItem className="rounded-none border-b border-white/40">
+                    <div className="relative flex h-10 items-center gap-2">
+                      <div className="relative flex h-10 w-12 min-w-12 items-center justify-center overflow-hidden rounded-lg border border-zinc-500 p-0.5 md:h-8 2xl:h-11 2xl:w-11">
+                        <Image
+                          src={"./pdf3.svg"}
+                          alt=""
+                          width={100}
+                          height={100}
+                          className="h-full w-full"
+                        />
+                      </div>
+                      <span className="text-white">PDF</span>
+                      <input
+                        className="absolute top-0 left-0 z-[2] h-full w-full opacity-0"
+                        type="file"
+                        accept="application/pdf*"
+                        onChange={(e) => handleFileUpload(e)}
+                        disabled={loading || !!fileData}
+                      />
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <div className="relative flex h-10 items-center gap-2">
+                      <div className="relative flex h-10 w-12 min-w-12 items-center justify-center overflow-hidden rounded-lg border border-zinc-500 p-0.5 md:h-8 2xl:h-11 2xl:w-11">
+                        <Image
+                          src={"./photo3.svg"}
+                          alt=""
+                          width={100}
+                          height={100}
+                          className="h-full w-full"
+                        />
+                      </div>
+                      <span className="text-start text-white">
+                        Foto ou Vídeo
+                      </span>
+                      <input
+                        className="iz-[2] absolute top-0 left-0 h-full w-full rounded-full bg-red-500 opacity-0"
+                        type="file"
+                        accept="image/*,video/*"
+                        onChange={(e) => handleFileUpload(e)}
+                        disabled={loading || !!fileData}
+                      />
+                    </div>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="hidden flex-row items-center gap-1 md:flex">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -568,9 +685,9 @@ export function Section() {
                   </button>
                 </>
               ) : (
-                <div className="flex max-w-[60%] flex-1 flex-row items-center gap-1">
+                <div className="flex flex-1 flex-row items-center gap-1">
                   <input
-                    className="flex-1 border-none text-[16px] text-white outline-none placeholder:text-zinc-500 focus:outline-none md:text-[12px] 2xl:text-base"
+                    className="xs:max-w-[40%] max-w-[60%] flex-1 border-none text-[16px] text-white outline-none placeholder:text-zinc-500 focus:outline-none md:max-w-full md:text-[12px] 2xl:text-base"
                     placeholder="Digite aqui sua ideia"
                     disabled={isRecording || loading}
                     value={inputMessage}
@@ -610,7 +727,7 @@ export function Section() {
                 ) : fileData?.mimeType.startsWith("audio/") ? (
                   <Send className="h-4 text-zinc-500 2xl:h-8" />
                 ) : isRecording ? (
-                  <Square className="h-4 text-zinc-500 2xl:h-8" />
+                  <Square className="h-4 animate-pulse text-red-500 2xl:h-8" />
                 ) : (
                   <Mic className="h-4 text-zinc-500 2xl:h-8" />
                 )}
