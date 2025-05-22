@@ -85,6 +85,17 @@ Faça uma média de acordo com a complexidade do projeto.
 <Instruções apos coleta de dados e aceite de orçamento>
  Avise que voce ira encaminhar para nossa equipe, para marcar uma reunião para entender todos os detalhes do projeto e gerar um orçamento exato.
 </Instruções apos coleta de dados e aceite de orçamento>
+<criação_do_cliente>
+Crie um resumo completo da conversa, incluindo o escopo do projeto discutido, informações fornecidas pelo cliente, 
+e quaisquer detalhes relevantes sobre o que foi conversado (como estimativas, tecnologias, etc., se aplicável).
+NÃO espere uma devolutiva do orçamento, Assim que o usuário fornecer TODAS as TRÊS informações (Nome, Telefone, E-mail) e você tiver informações suficientes para criar o RESUMO, você DEVE IMEDIATAMENTE e OBRIGATORIAMENTE chamar a função "createClient".
+Mapeie as informações fornecidas pelo usuário para os parâmetros da função "createClient" da seguinte forma:
+- O Nome completo do cliente vai para o parâmetro 'name'.
+- O Número de telefone do cliente vai para o parâmetro 'phone'.
+- O Endereço de e-mail do cliente vai para o parâmetro 'email'.
+- O breve resumo do projeto vai para o parâmetro 'summary'.
+NUNCA PEÇA PARA O CLIENTE CRIAR O RESUMO.
+<criação_do_cliente/>
 `;
 
 // Prompt de teste simplificado para forçar a chamada da função createClient
