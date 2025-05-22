@@ -119,7 +119,6 @@ const executeCreateClient = async (args: {
   }
 };
 
-// Function to handle incoming function calls from the model
 export const handleFunctionCalls = async (
   // TODO: Type functionCalls more specifically if possible, maybe protos.google.cloud.aiplatform.v1.FunctionCall[]
   functionCalls: { name: string; args: any; toolCallId: string }[], // Basic type based on usage
