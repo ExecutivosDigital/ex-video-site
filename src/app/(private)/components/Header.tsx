@@ -17,7 +17,7 @@ export function Header() {
       <button
         onClick={() =>
           window.open(
-            `https://api.whatsapp.com/send?phone=+554197819114&text=Ol%C3%A1+Eu+venho+atrav%C3%A9s+do+site`,
+            `https://api.whatsapp.com/send?phone=+5541987037641&text=Ol%C3%A1+Eu+venho+atrav%C3%A9s+do+site`,
             "_blank",
           )
         }
